@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const passport = require("passport");
 
 const { adminModel } = require("../model/adminSchema");
+const { userModel } = require("../model/userSchema");
 
 const secretKey = process.env.KEY;
 
@@ -17,7 +18,7 @@ const registerAdmin = async (req, res) => {
         number,
         email,
         password,
-        conPassword} = req.body;
+        conPassword } = req.body;
 
     try {
         const admin = new adminModel({
@@ -76,6 +77,89 @@ const signinAdmin = async (req, res) => {
 };
 
 
+//get customers from db
+//----------------------------------------------------------------
+const getCustomer = async (req, res) => {
+    try {
+        if (req.user.isAdmin) {
+            let { searchName, page, sortQue } = req.query;
+
+            //default values for searchName, page, sortQue
+            searchName = searchName || "";
+            page = page - 1 || 0;
+            sortQue = sortQue ? sortQue.split(" ") : ["lastActivity", "-1"];
+            let limit = 3;
+
+            //create sortby object key and sort quary
+            let sortBy = {};
+            sortBy[sortQue[0]] = parseInt(sortQue[1]);
+
+            const data = await userModel.find({ name: { $regex: searchName, $options: "i" } })
+                .sort(sortBy)
+                .skip(page * limit)
+                .limit(limit);
+            //const data = await customerModel.find({ name: { $regex: searchName, $options: "i" } }).sort ( { date: -1} );
+
+            //data2 check the next page present or not
+            const data2 = await userModel.find({ name: { $regex: searchName, $options: "i" } })
+                .sort(sortBy)
+                .skip((page + 1) * limit)
+                .limit(limit);
+            let isNextPagePresent = false;
+            if (data2.length > 0) {
+                isNextPagePresent = true;
+            }
+
+            res.status(200).json({ data: data, isNextPagePresent: isNextPagePresent });
+        } else {
+            res.status(404).json({ message: "please login first" });
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(404).json({ message: err.message });
+    }
+};
+
+//delete customer 
+//----------------------------------------------------------------
+const deleteCustomer = async (req, res) => {
+    try {
+        if (req.user.isAdmin) {
+            let _id = req.params.id;
+
+            const data = await userModel.deleteOne({ _id });
+            //console.log(data);
+            res.status(200).json(data);
+        } else {
+            res.status(404).json({ message: "please login first" });
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(404).json({ message: err.message });
+    }
+};
+
+//get 1 customers details
+//----------------------------------------------------------------
+const getOneCustomerDetails = async (req, res) => {
+    try {
+        if (req.user.isAdmin) {
+            const customer = await userModel.findById(req.params.id);
+            if (customer) {
+                res.status(200).json(customer);
+            } else {
+                res.status(404).json({ message: "customer not found" });
+            }
+        } else {
+            res.status(404).json({ message: "please login first" });
+        }
+
+    } catch (err) {
+        console.log(err);
+        res.status(404).json({ message: err.message });
+    }
+};
+
 
 //generate token 
 //-----------------------------------------------
@@ -96,5 +180,5 @@ async function generateAuthToken(id) {
 
 
 module.exports = {
-    registerAdmin, signinAdmin
+    registerAdmin, signinAdmin, getCustomer, deleteCustomer, getOneCustomerDetails
 };
