@@ -1,24 +1,51 @@
 
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const passport = require("passport");
 
-const secretKey = process.env.KEY;
 
 const { userModel } = require("../model/userSchema");
+const { passwordValidation, mailValidation, numberValidation, generateAuthToken } = require("../myModule/operation");
 
 
 //Registering user controller
 //------------------------------------------------------------------------------------------
 const registerUser = async (req, res) => {
-    const { name,
-        number,
-        email,
-        password,
-        conPassword,
-        address } = req.body;
-
     try {
+        const { name,
+            number,
+            email,
+            password,
+            conPassword,
+            address } = req.body;
+
+        //check all filled is filledup or not
+        if (!name || !number || !email || !password || !conPassword || !address) {
+            res.status(400).json({ message: "please provide data" });
+            return;
+        }
+
+        // Check the password, mail and number validation
+        if (!passwordValidation(password)) {
+            res.status(400).json({ message: "password is invalid" });
+            return;
+        }
+        
+        //check if password and confirm password are same
+        if (password !== conPassword) {
+            res.status(400).json({ message: "password are not match" });
+            return;
+        }
+        
+        if (!mailValidation(email)) {
+            res.status(400).json({ message: "email is invalid" });
+            return;
+        }
+        if (!numberValidation(number)) {
+            res.status(400).json({ message: "phone number is invalid" });
+            return;
+        }
+
+
         const user = new userModel({
             name,
             number,
@@ -74,25 +101,6 @@ const signinUser = async (req, res) => {
         res.status(404).json({ message: err.message });
     }
 };
-
-
-
-//generate token 
-//-----------------------------------------------
-async function generateAuthToken(id) {
-    try {
-        //first creat a paylod
-        const paylod = {
-            _id: id,
-        }
-
-        //create token
-        token = jwt.sign(paylod, secretKey, { expiresIn: "1d" });
-        return token;
-    } catch (err) {
-        console.log(err);
-    }
-}
 
 
 module.exports = {

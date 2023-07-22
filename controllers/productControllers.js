@@ -102,6 +102,11 @@ const getProductList = async (req, res) => {
 //----------------------------------------------------------------------------
 const getOneProductDetails = async (req, res) => {
     try {
+        //if id not present in params return
+        if (!req.params.id) {
+            res.status(404).send("please select a product id");
+            return;
+        }
         const data = await productModel.findById(req.params.id);
         res.status(200).json(data);
     } catch (err) {
@@ -117,8 +122,12 @@ const productDelete = async (req, res) => {
         if (req.user.isAdmin) {
             let _id = req.params.id;
 
+            //if id not present in params return
+            if (!_id) {
+                res.status(404).send("please select a product id");
+                return;
+            }
             const data = await productModel.deleteOne({ _id });
-            //console.log(data);
             res.status(200).json(data);
         } else {
             res.status(404).json({ message: "please login first" });
@@ -136,6 +145,13 @@ const editProduct = async (req, res) => {
     try {
         if (req.user.isAdmin) {
             let _id = req.params.id;
+
+            //if id not present in params return
+            if (!_id) {
+                res.status(404).send("please select a product id");
+                return;
+            }
+
             const {
                 category,
                 imgLink,

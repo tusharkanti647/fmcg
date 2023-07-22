@@ -25,6 +25,11 @@ const curtAddProduct = async (req, res) => {
         if (req.user) {
             //get the product id
             const _id = req.params.id;
+            //if id not present in params return
+            if (!_id) {
+                res.status(404).send("please select a product id");
+                return;
+            }
             //get the user id
             const userId = req.user.id;
 
@@ -72,7 +77,7 @@ const removeOneCurtProduct = async (req, res) => {
             });
 
             res.status(200).json(response.cart)
-        }else{
+        } else {
             res.status(404).send("please login first");
         }
     } catch (err) {
@@ -93,7 +98,7 @@ const emptyCurt = async (req, res) => {
                 $set: { cart: [] }
             });
             res.status(200).json(response)
-        }else {
+        } else {
             res.status(404).send("please login first");
         }
     } catch (err) {
@@ -118,7 +123,7 @@ const editCurtQuantity = async (req, res) => {
                 $set: { "cart.$.qty": req.body.qty }
             });
             res.status(200).json(response);
-        }else {
+        } else {
             res.status(404).send("please login first");
         }
     } catch (err) {

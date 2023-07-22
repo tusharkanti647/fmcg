@@ -5,6 +5,7 @@ const passport = require("passport");
 
 const { adminModel } = require("../model/adminSchema");
 const { userModel } = require("../model/userSchema");
+const { generateAuthToken, numberValidation, mailValidation, passwordValidation } = require("../myModule/operation");
 
 const secretKey = process.env.KEY;
 
@@ -19,6 +20,34 @@ const registerAdmin = async (req, res) => {
         email,
         password,
         conPassword } = req.body;
+
+
+    //check all filled is filledup or not
+    if (!name || !number || !email || !password || !conPassword) {
+        res.status(400).json({ message: "please provide data" });
+        return;
+    }
+
+    // Check the password, mail and number validation
+    if (!passwordValidation(password)) {
+        res.status(400).json({ message: "password is invalid" });
+        return;
+    }
+
+    //check if password and confirm password are same
+    if (password !== conPassword) {
+        res.status(400).json({ message: "password are not match" });
+        return;
+    }
+
+    if (!mailValidation(email)) {
+        res.status(400).json({ message: "email is invalid" });
+        return;
+    }
+    if (!numberValidation(number)) {
+        res.status(400).json({ message: "phone number is invalid" });
+        return;
+    }
 
     try {
         const admin = new adminModel({
@@ -126,6 +155,11 @@ const deleteCustomer = async (req, res) => {
     try {
         if (req.user.isAdmin) {
             let _id = req.params.id;
+            //if id not present in params return
+            if (!_id) {
+                res.status(404).send("please select a customer id");
+                return;
+            }
 
             const data = await userModel.deleteOne({ _id });
             //console.log(data);
@@ -144,6 +178,12 @@ const deleteCustomer = async (req, res) => {
 const getOneCustomerDetails = async (req, res) => {
     try {
         if (req.user.isAdmin) {
+            //if id not present in params return
+            if (!req.params.id) {
+                res.status(404).send("please select a customer id");
+                return;
+            }
+
             const customer = await userModel.findById(req.params.id);
             if (customer) {
                 res.status(200).json(customer);
@@ -160,23 +200,6 @@ const getOneCustomerDetails = async (req, res) => {
     }
 };
 
-
-//generate token 
-//-----------------------------------------------
-async function generateAuthToken(id) {
-    try {
-        //first creat a paylod
-        const paylod = {
-            _id: id,
-        }
-
-        //create token
-        token = jwt.sign(paylod, secretKey, { expiresIn: "1d" });
-        return token;
-    } catch (err) {
-        console.log(err);
-    }
-}
 
 
 module.exports = {
