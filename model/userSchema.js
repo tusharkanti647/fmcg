@@ -1,9 +1,7 @@
 const mongoose = require("mongoose");
-const jwt = require("jsonwebtoken");
 
-const secretKey = process.env.KEY;
 
-const usersSchema = new mongoose.Schema({
+const usersSchema = mongoose.Schema({
     name: {
         type: String,
         required: true,
@@ -37,13 +35,6 @@ const usersSchema = new mongoose.Schema({
     cart: Array,
 });
 
-
-
-
 const userModel = mongoose.model("users", usersSchema);
-
-
-
-
 
 module.exports = { userModel};
