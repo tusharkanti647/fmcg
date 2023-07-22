@@ -13,6 +13,7 @@ require("./connection");
 
 //connect the user Routes
 app.use('/user', require('./routers/userRoutes'));
+app.use("/admin", require("./routers/adminRoutes"));
 
 
 app.listen(port, () => {

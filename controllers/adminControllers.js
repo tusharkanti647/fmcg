@@ -2,48 +2,47 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
+const { adminModel } = require("../model/adminSchema");
 
 const secretKey = process.env.KEY;
 
-const { userModel } = require("../model/userSchema");
 
 
-//Registering user controller
+
+//Registering admin controller
 //------------------------------------------------------------------------------------------
-const registerUser = async (req, res) => {
+const registerAdmin = async (req, res) => {
     const { name,
         number,
         email,
         password,
-        conPassword,
-        address } = req.body;
+        conPassword} = req.body;
 
     try {
-        const user = new userModel({
+        const admin = new adminModel({
             name,
             number,
             email,
             password: bcrypt.hashSync(password, 10),
             conPassword: bcrypt.hashSync(conPassword, 10),
-            address
         });
 
-        const response = await user.save();
+        const response = await admin.save();
 
         //generate token call the function
         const token = await generateAuthToken(response._id);
-        res.status(201).json({ user, token: "Bearer " + token });
+        res.status(201).json({ admin, token: "Bearer " + token });
     } catch (err) {
         console.log(err);
-        res.status(500).json({ error: 'Failed to create user' });
+        res.status(500).json({ error: 'Failed to create admin' });
     }
 
 };
 
 
-//sign user controller
+//sign admin controller
 //------------------------------------------------------------------------------------------
-const signinUser = async (req, res) => {
+const signinAdmin = async (req, res) => {
     try {
         const { email, password } = req.body;
 
@@ -53,22 +52,22 @@ const signinUser = async (req, res) => {
             return;
         }
 
-        //find the user from mongodb
-        let user = await userModel.findOne({ email: email });
-        if (!user) {
-            res.status(400).json({ message: "user not present" });
+        //find the admin from mongodb
+        let admin = await adminModel.findOne({ email: email });
+        if (!admin) {
+            res.status(400).json({ message: "admin not present" });
             return;
         }
 
         //compare the hash password and match it
-        if (!bcrypt.compareSync(req.body.password, user.password)) {
+        if (!bcrypt.compareSync(req.body.password, admin.password)) {
             res.status(400).json({ message: "password not match" });
             return;
         }
 
         //generate token call the function
-        const token = await generateAuthToken(user._id);
-        res.status(201).json({ user, token: "Bearer " + token });
+        const token = await generateAuthToken(admin._id);
+        res.status(201).json({ admin, token: "Bearer " + token });
     } catch (error) {
         console.log(err);
         res.status(404).json({ message: err.message });
@@ -96,5 +95,5 @@ async function generateAuthToken(id) {
 
 
 module.exports = {
-    registerUser, signinUser
+    registerAdmin, signinAdmin
 };
