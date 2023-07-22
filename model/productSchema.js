@@ -25,12 +25,14 @@ const productSchema = new mongoose.Schema({
         required: true,
     },
     rating: {
-        type: String,
+        type: Number,
     },
     about: {
-        weight: [],
+        weight: { 
+            type: String
+        },
         pcs: {
-            type: String,
+            type: Number,
         },
         description: {
             type: String,

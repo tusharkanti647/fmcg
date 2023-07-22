@@ -2,6 +2,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
+
 const { adminModel } = require("../model/adminSchema");
 
 const secretKey = process.env.KEY;
