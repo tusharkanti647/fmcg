@@ -5,8 +5,6 @@ const app = express();
 dotenv.config({ path: "./config.env" })
 const port = process.env.PORT || 8000;
 
-
-
 //for mongodb connection
 require("./connection");
 
@@ -15,6 +13,7 @@ require("./connection");
 app.use('/user', require('./routers/userRoutes'));
 app.use("/admin", require("./routers/adminRoutes"));
 app.use("/products", require("./routers/productRoutes"));
+app.use("/curt", require("./routers/cartRoutes"));
 
 app.listen(port, () => {
     console.log(`listening on ${port}`);

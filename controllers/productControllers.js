@@ -1,12 +1,7 @@
-
-
-
-
-
-//add product api
-
 const { productModel } = require("../model/productSchema");
 
+
+//add product controller
 //----------------------------------------------------------------
 const addProduct = async (req, res) => {
     try {
