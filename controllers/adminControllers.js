@@ -111,27 +111,21 @@ const signinAdmin = async (req, res) => {
 const getCustomer = async (req, res) => {
     try {
         if (req.user.isAdmin) {
-            let { searchName, page, sortQue } = req.query;
+            let { searchName, page} = req.query;
 
             //default values for searchName, page, sortQue
             searchName = searchName || "";
             page = page - 1 || 0;
-            sortQue = sortQue ? sortQue.split(" ") : ["lastActivity", "-1"];
             let limit = 3;
 
-            //create sortby object key and sort quary
-            let sortBy = {};
-            sortBy[sortQue[0]] = parseInt(sortQue[1]);
 
             const data = await userModel.find({ name: { $regex: searchName, $options: "i" } })
-                .sort(sortBy)
                 .skip(page * limit)
                 .limit(limit);
             //const data = await customerModel.find({ name: { $regex: searchName, $options: "i" } }).sort ( { date: -1} );
 
             //data2 check the next page present or not
             const data2 = await userModel.find({ name: { $regex: searchName, $options: "i" } })
-                .sort(sortBy)
                 .skip((page + 1) * limit)
                 .limit(limit);
             let isNextPagePresent = false;

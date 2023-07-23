@@ -2,8 +2,8 @@ var JwtStrategy = require('passport-jwt').Strategy,
     ExtractJwt = require('passport-jwt').ExtractJwt;
 var passport = require("passport");
 
-const { userModel } = require("../model/userSchema");
-const { adminModel } = require('../model/adminSchema');
+const { userModel } = require("./model/userSchema");
+const { adminModel } = require('./model/adminSchema');
 const secretKey = process.env.KEY;
 
 var opts = {}

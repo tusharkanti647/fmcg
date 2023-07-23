@@ -1,0 +1,40 @@
+swagger: "2.0"
+info:
+  title: FMCG node.js backend project
+  description: This is a server side node.js write on js not in typescript project where create api end points. here i used mongodb as a data base
+servers:
+- url: http://localhost:8000
+  description: Development server
+
+paths:
+  /products/products-search:
+    get:
+      summary: Returns a list of products.
+      description: shows first 8 products available in my db, and show next page is available or not 
+      responses:
+        200: # status code
+          description: Successul Response
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                properties:
+                     type: object
+                        properties:
+                          _id: string
+                          about: object
+                          category: string
+                          imgLink: string
+                          titel: string
+                          discountPrice: number
+                          originalPrice: number
+                          rating: number
+                          __v: number
+
+              isNextPagePresent:
+                type: boolean
+        
+        404:
+         description: page not found
+  

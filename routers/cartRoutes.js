@@ -7,7 +7,7 @@ const { curtAddProduct, removeOneCurtProduct, emptyCurt, getCurtDetails, editCur
 
 
 const secretKey = process.env.KEY;
-require("./passport");
+require("../passport");
 
 router.use(bodyParser.json());
 

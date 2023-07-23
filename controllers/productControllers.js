@@ -60,12 +60,12 @@ const getProductList = async (req, res) => {
         let { searchName, page, sortQue, filters } = req.query;
 
         //default values for search, page, sortQue, filters
-        searchName = searchName || "";
+        searchName = searchName || ""; //search the name
         page = page - 1 || 0;
-        sortQue = sortQue ? sortQue.split(" ") : ["rating", "-1"];
-        filters = filters ? filters.split(" ") : ["electronic"];
-        let limit = 8;
-
+        sortQue = sortQue ? sortQue.split(" ") : ["rating", "-1"]; //sort the product accroding the rating, price low to high, sort to high. ["rating", "-1"] first array element is sort key, and send element sort low to high or high to low .
+        filters = filters ? filters.split(" ") : ["electronic", "book", "mobile", "laptop"]; //["electronic", "books", "mobile", "laptop"] filter my document accroding my arraylist present catagory present waise.
+        let limit = 8; //pare page limit
+ 
         //create sortby object key and sort quary
         let sortBy = {};
         sortBy[sortQue[0]] = parseInt(sortQue[1]);

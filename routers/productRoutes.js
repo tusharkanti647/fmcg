@@ -6,7 +6,7 @@ const passport = require("passport");
 const { addProduct, getProductList, getOneProductDetails, productDelete, editProduct } = require('../controllers/productControllers');
 
 const secretKey = process.env.KEY;
-require("./passport");
+require("../passport");
 
 router.use(bodyParser.json());
 

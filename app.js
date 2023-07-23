@@ -1,5 +1,6 @@
 const dotenv = require('dotenv');
 const express = require('express');
+const swaggerDocs = require('./swagger');
 const app = express();
 
 dotenv.config({ path: "./config.env" })
@@ -17,5 +18,6 @@ app.use("/curt", require("./routers/cartRoutes"));
 
 app.listen(port, () => {
     console.log(`listening on ${port}`);
+    swaggerDocs(app, port)
 })
 
