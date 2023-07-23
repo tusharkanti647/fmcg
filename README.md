@@ -1,5 +1,7 @@
 # fmcg
 
+## This project write on javascript.
+
 ## Installation
 
 1. clone my repo.
