@@ -3,8 +3,16 @@ info:
   title: FMCG node.js backend project
   description: This is a server side node.js write on js not in typescript project where create api end points. here i used mongodb as a data base
 servers:
-- url: http://localhost:8000
+ - url: http://localhost:8000
   description: Development server
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  bearerAuth: []
 
 paths:
   /products/products-search:
@@ -19,11 +27,14 @@ paths:
             properties:
               data:
                 type: array
-                properties:
+                items:
                      type: object
                         properties:
                           _id: string
-                          about: object
+                          about:
+                            type: object
+                            properties:
+                              n: number
                           category: string
                           imgLink: string
                           titel: string
@@ -37,4 +48,37 @@ paths:
         
         404:
          description: page not found
-  
+
+ #only one product details gets
+  /products/get-One-Product/{productId}:
+    get:
+      summary: Returns product details as an object.
+      description: this api can access product details. it accessible by anyone like admin user and who can not login
+      parameters:
+       - name: productId
+         in: path
+         required: true
+         schema:
+           type : string
+      responses:
+        200: # status code
+          description: Successul Response
+        404:
+         description: page not found
+
+  #get cart details
+  curt/get-curt:
+    get:
+      summary: Returns a array of products that are present in user curt.
+      description: this api can access product details that are present in curt. it accessible by anyone user who can login in application. here send the Authorization bearer key.
+      parameters:
+       - name: productId
+         in: path
+         required: true
+         schema:
+           type : string
+      responses:
+        200: # status code
+          description: Successul Response
+        404:
+         description: page not found
